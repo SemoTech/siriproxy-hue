@@ -12,8 +12,8 @@ require "json" # Parse Hue responses
 
 
 class HueEntity
-  @@hueIP = "10.0.1.12"
-  @@hueKey = "7dcdc2716a5c8796367968c47ad7d44c"
+  @@hueIP = "192.168.2.40"
+  @@hueKey = "7b451ec4240eaaf73a102bcbf05ba5fe"
 
   attr_accessor :type
   attr_accessor :name
@@ -29,7 +29,9 @@ class HueEntity
     result = lights.select { |light| light[:name].to_s.downcase == capturedString }
     result = result[0]
 
-    if result.empty? then return false end
+    if result.nil?
+    	return false 
+    end
 
     @type = result[:type]
     @number = result[:number]
@@ -61,9 +63,9 @@ class HueEntity
       RestClient.put(url, {:bri => value}.to_json, content_type: :json)
     end
   end
-
-  def color (value)
-
+  def color (hue)
+    url = "#{@@hueIP}/api/#{@@hueKey}/lights/#{@number}/state"
+    RestClient.put(url, {hue: 182*hue, sat: 254}.to_json, content_type: :json)
   end
 end
 
@@ -140,13 +142,13 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
       request_completed
     end
 
-    value = parseNumbers(value)
     if (is_numeric? value)
+      value = parseNumbers(value)
       log value
       matchedEntity.brightness(value.to_i)
     else
       # query color for hsl value
-      query = "http://www.colourlovers.com/api/colors?keywords=#{query}&numResults=1&format=json"
+      query = "http://www.colourlovers.com/api/colors?keywords=#{value}&numResults=1&format=json"
       # set entity to color value
     end
 
