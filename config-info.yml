@@ -1,0 +1,10 @@
+#Example configuration options that can be placed in your main SiriProxy config.yml
+
+##########################
+#NOTICE: Modifying these options in this file has no effect. You must put them in SiriProxy's config.yml!
+##########################
+  
+  - name: 'Philips_Hue'
+      git: 'git://github.com/SemoTech/siriproxy-hue.git'
+      ip: '<your_IP_address_of_hue_bridge>'
+      hash: '<your_hash_for_username>' #You can create any hash you want for this field on your first POST request to the Hue Bridge. (You must press the bridge link button for unit to recognize the hash you create)..
