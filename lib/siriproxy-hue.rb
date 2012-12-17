@@ -22,6 +22,7 @@ class HueEntity
 
 
   def initialize (capturedString,hue_ip,hue_hash)
+    log(capturedString)
     @@hueIP = hue_ip #set in config.yml 
     @@hueKey = hue_hash #set in config.yml
     response = RestClient.get("#{@@hueIP}/api/#{@@hueKey}")
@@ -119,6 +120,8 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
 
   # Relative brightness change
   listen_for /turn (up|down)(?: the)? ([a-z]*)/i do |change, entity|
+  log(change)
+  log(entity)
     unless(matchedEntity = HueEntity.new(entity,hue_ip,hue_hash))
       say "I couldn't find any lights by that name."
       request_completed
