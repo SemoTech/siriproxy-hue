@@ -12,14 +12,18 @@ require "json" # Parse Hue responses
 
 
 class HueEntity
-  @@hueIP = "192.168.2.40"
-  @@hueKey = "7b451ec4240eaaf73a102bcbf05ba5fe"
+
+@@hueIP = "192.168.1.10" #change this in the config.yml - not here
+@@hueKey ="asdaskjdksjbkjbfkjb" #change this in the config.yml - not here
 
   attr_accessor :type
   attr_accessor :name
   attr_accessor :number
 
-  def initialize (capturedString)
+
+  def initialize (capturedString,hue_ip,hue_hash)
+    @@hueIP = hue_ip #set in config.yml 
+    @@hueKey = hue_hash #set in config.yml
     response = RestClient.get("#{@@hueIP}/api/#{@@hueKey}")
     data = JSON.parse(response)
     lights = data["lights"].map do |key, light|
@@ -30,7 +34,7 @@ class HueEntity
     result = result[0]
 
     if result.nil?
-    	return false 
+      return false 
     end
 
     @type = result[:type]
@@ -70,6 +74,14 @@ class HueEntity
 end
 
 class SiriProxy::Plugin::Hue < SiriProxy::Plugin
+  attr_accessor :hue_ip
+  attr_accessor :hue_hash
+    
+    def initialize(config = {})
+        self.hue_ip = config["ip"]
+        self.hue_hash = config["hash"]
+    end
+  
   def parseNumbers (value)
     value = value.sub_numbers
     if (value =~ /%/)
@@ -83,7 +95,8 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
 
   # Binary state
   listen_for /turn (on|off)(?: the)? ([a-z]*)/i do |state, entity|
-    unless(matchedEntity = HueEntity.new(entity))
+  
+    unless(matchedEntity = HueEntity.new(entity,hue_ip,hue_hash))
       say "I couldn't find any lights by that name."
       request_completed
     end
@@ -106,7 +119,7 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
 
   # Relative brightness change
   listen_for /turn (up|down)(?: the)? ([a-z]*)/i do |change, entity|
-    unless(matchedEntity = HueEntity.new(entity))
+    unless(matchedEntity = HueEntity.new(entity,hue_ip,hue_hash))
       say "I couldn't find any lights by that name."
       request_completed
     end
@@ -137,7 +150,7 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
   #   Numbers (0-254) and percentages (0-100) are treated as brightness values
   #   Strings are used as a color query to lookup HSV values
   listen_for /set(?: the)? ([a-z]*) to ([a-z0-9%]*)/i do |entity, value|
-    unless(matchedEntity = HueEntity.new(entity))
+    unless(matchedEntity = HueEntity.new(entity,hue_ip,hue_hash))
       say "I couldn't find any lights by that name."
       request_completed
     end
