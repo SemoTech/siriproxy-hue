@@ -95,7 +95,8 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
   end
 
   # test
-  listen_for /lighting special*/i 
+  listen_for (/lighting.*special/i)
+  {
     # test four lights
     url = "#{self.hue_ip}/api/#{self.hue_hash}/groups/0/action"
     hue = 182
@@ -123,7 +124,7 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
     
     say "Lighting scene one enabled."
     request_completed
-  end
+  }
 
   # Binary state
   listen_for /turn (on|off)(?: the)? ([a-z]*)/i do |state, entity|
