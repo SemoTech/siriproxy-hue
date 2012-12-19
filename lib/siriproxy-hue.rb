@@ -95,7 +95,7 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
   end
 
   # test
-  listen_for /lighting scene one/i 
+  listen_for /lighting special/i 
     # test four lights
     url = "#{self.hue_ip}/api/#{self.hue_hash}/groups/0/action"
     hue = 182
@@ -151,8 +151,7 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
 
   # Relative brightness change
   listen_for /turn (up|down)(?: the)? ([a-z]*)/i do |change, entity|
-  log(change)
-  log(entity)
+
     unless(matchedEntity = HueEntity.new(entity,hue_ip,hue_hash))
       say "I couldn't find any lights by that name."
       request_completed
