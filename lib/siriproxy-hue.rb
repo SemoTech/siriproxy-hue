@@ -94,6 +94,37 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
     obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
   end
 
+  # test
+  listen_for /lighting scene one/i 
+    # test four lights
+    url = "#{self.hue_ip}/api/#{self.hue_hash}/groups/0/action"
+    hue = 182
+    
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    
+    sleep(3)
+       hue = hue +4000
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    sleep(3)
+       hue = hue +4000
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    sleep(3)
+       hue = hue +4000
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    sleep(3)
+       hue = hue +4000
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    sleep(3)
+       hue = hue +4000
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    sleep(3)
+       hue = hue +4000
+    RestClient.put(url, {hue: hue, sat: 254}.to_json, content_type: :json)
+    
+    say "Lighting scene one enabled."
+    request_completed
+  end
+
   # Binary state
   listen_for /turn (on|off)(?: the)? ([a-z]*)/i do |state, entity|
   
@@ -173,12 +204,7 @@ class SiriProxy::Plugin::Hue < SiriProxy::Plugin
     request_completed
   end
 
-  # Scenes
-  listen_for /make it look like a (.+)/i do |scene|
-    # do a google image request
-    # use the first result
-    # pull n colors, where n is the number of lights
-    # set each light to color[i]
-    request_completed
-  end
+
+  
+  
 end
